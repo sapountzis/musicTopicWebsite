@@ -1,3 +1,5 @@
+import os
+
 import joblib
 import pandas as pd
 import streamlit as st
@@ -7,19 +9,15 @@ import urllib.request
 from pathlib import Path
 
 
-def download_file(url, download_to: Path, expected_size=None, key=None):
+def download_file(url, download_to: str, key=None):
     # Don't download the file twice.
     # (If possible, verify the download using the file length.)
-    if download_to.exists():
-        if expected_size:
-            if download_to.stat().st_size == expected_size:
-                return
-        else:
-            st.info(f"{url} is already downloaded.")
-            if not st.button("Download again?", key=key):
-                return
-
-    download_to.parent.mkdir(parents=True, exist_ok=True)
+    download_dir = '/'.join(download_to.split("/")[:-1])
+    os.makedirs(download_dir, exist_ok=True)
+    if len(os.listdir(download_dir)) > 0:
+        st.info(f"{url} is already downloaded.")
+        if not st.button("Download again?", key=key):
+            return
 
     # These are handles to two visual elements to animate.
     weights_warning, progress_bar = None, None
@@ -52,12 +50,12 @@ def download_file(url, download_to: Path, expected_size=None, key=None):
             progress_bar.empty()
 
 
-@st.experimental_singleton
+# @st.experimental_singleton
 def get_data(data_local_path: str):
     return pd.read_feather(data_local_path)
 
 
-@st.experimental_singleton
+# @st.experimental_singleton
 def get_model(model_local_path: str):
     model: Top2Vec = joblib.load(model_local_path)
     model._check_model_status()
@@ -77,14 +75,14 @@ if __name__ == "__main__":
     HERE = Path(__file__).parent
     MODEL_URL = "https://filesend.io/hefH/top2vec-self.model?download_token=84000ec3ed68bce0f2b0ccd8c0197e267effb16d76dc41da85c9beab3b996abe"
     DATA_URL = "https://filesend.io/hefI/all_data_clean_corrected_english.feather?download_token=83ed7f06e4810dd1dc27a93d3b3c231ebc8b77162539b67765fe39571907b62b"
-    MODEL_LOCAL_PATH = HERE / "models/top2vec-self.model"
-    DATA_LOCAL_PATH = HERE / "data/all_data_clean_corrected_english.feather"
+    MODEL_LOCAL_PATH = "models/top2vec-self.model"
+    DATA_LOCAL_PATH = "data/all_data_clean_corrected_english.feather"
 
     download_file(MODEL_URL, MODEL_LOCAL_PATH, key='model')
     download_file(DATA_URL, DATA_LOCAL_PATH, key='data')
 
-    model = get_model(MODEL_LOCAL_PATH.as_posix().__str__())
-    data = get_data(DATA_LOCAL_PATH.as_posix().__str__())
+    model = get_model(MODEL_LOCAL_PATH)
+    data = get_data(DATA_LOCAL_PATH)
     st.title('Music Topic Search')
     c = st.empty()
     with st.sidebar:
