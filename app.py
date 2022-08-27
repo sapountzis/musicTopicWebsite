@@ -9,53 +9,12 @@ import urllib.request
 from pathlib import Path
 
 
-def download_file(url, download_to: str, key=None):
-    # Don't download the file twice.
-    # (If possible, verify the download using the file length.)
-    download_dir = '/'.join(download_to.split("/")[:-1])
-    os.makedirs(download_dir, exist_ok=True)
-    if len(os.listdir(download_dir)) > 0:
-        st.info(f"{url} is already downloaded.")
-        if not st.button("Download again?", key=key):
-            return
-
-    # These are handles to two visual elements to animate.
-    weights_warning, progress_bar = None, None
-    try:
-        weights_warning = st.warning("Downloading %s..." % url)
-        progress_bar = st.progress(0)
-        with open(download_to, "wb") as output_file:
-            with urllib.request.urlopen(url) as response:
-                length = int(response.info()["Content-Length"])
-                counter = 0.0
-                MEGABYTES = 2.0 ** 20.0
-                while True:
-                    data = response.read(8192)
-                    if not data:
-                        break
-                    counter += len(data)
-                    output_file.write(data)
-
-                    # We perform animation by overwriting the elements.
-                    weights_warning.warning(
-                        "Downloading %s... (%6.2f/%6.2f MB)"
-                        % (url, counter / MEGABYTES, length / MEGABYTES)
-                    )
-                    progress_bar.progress(min(counter / length, 1.0))
-    # Finally, we remove these visual elements by calling .empty().
-    finally:
-        if weights_warning is not None:
-            weights_warning.empty()
-        if progress_bar is not None:
-            progress_bar.empty()
-
-
-# @st.experimental_singleton
+@st.experimental_singleton
 def get_data(data_local_path: str):
     return pd.read_feather(data_local_path)
 
 
-# @st.experimental_singleton
+@st.experimental_singleton
 def get_model(model_local_path: str):
     model: Top2Vec = joblib.load(model_local_path)
     model._check_model_status()
@@ -73,13 +32,8 @@ def get_songs(data: pd.DataFrame, lyrics: list[str]):
 
 if __name__ == "__main__":
     HERE = Path(__file__).parent
-    MODEL_URL = "https://filesend.io/hefH/top2vec-self.model?download_token=84000ec3ed68bce0f2b0ccd8c0197e267effb16d76dc41da85c9beab3b996abe"
-    DATA_URL = "https://filesend.io/hefI/all_data_clean_corrected_english.feather?download_token=83ed7f06e4810dd1dc27a93d3b3c231ebc8b77162539b67765fe39571907b62b"
     MODEL_LOCAL_PATH = "models/top2vec-self.model"
     DATA_LOCAL_PATH = "data/all_data_clean_corrected_english.feather"
-
-    download_file(MODEL_URL, MODEL_LOCAL_PATH, key='model')
-    download_file(DATA_URL, DATA_LOCAL_PATH, key='data')
 
     model = get_model(MODEL_LOCAL_PATH)
     data = get_data(DATA_LOCAL_PATH)
