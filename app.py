@@ -26,7 +26,7 @@ def get_similar(input: str, model: Top2Vec):
     return model.search_documents_by_vector(vec, num_docs=20)[0]
 
 
-def get_songs(data: pd.DataFrame, lyrics: list[str]):
+def get_songs(data, lyrics):
     return data[data['lyrics'].isin(lyrics)][['song', 'artist']].reset_index(drop=True)
 
 
@@ -37,6 +37,7 @@ if __name__ == "__main__":
 
     model = get_model(MODEL_LOCAL_PATH)
     data = get_data(DATA_LOCAL_PATH)
+
     st.title('Music Topic Search')
     c = st.empty()
     with st.sidebar:
