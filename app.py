@@ -52,13 +52,13 @@ def download_file(url, download_to: Path, expected_size=None):
 
 
 @st.experimental_singleton
-def get_data():
-    return pd.read_feather('data/all_data_clean_corrected_english.feather')
+def get_data(data_local_path: Path):
+    return pd.read_feather(data_local_path)
 
 
 @st.experimental_singleton
-def get_model():
-    model: Top2Vec = Top2Vec.load('models/top2vec-self.model')
+def get_model(model_local_path: Path):
+    model: Top2Vec = Top2Vec.load(model_local_path)
     model._check_model_status()
     return model
 
@@ -82,8 +82,8 @@ if __name__ == "__main__":
     download_file(MODEL_URL, MODEL_LOCAL_PATH)
     download_file(DATA_URL, DATA_LOCAL_PATH)
 
-    model = get_model()
-    data = get_data()
+    model = get_model(MODEL_LOCAL_PATH)
+    data = get_data(DATA_LOCAL_PATH)
     st.title('Music Topic Search')
     c = st.empty()
     with st.sidebar:
