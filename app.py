@@ -6,7 +6,7 @@ import urllib.request
 from pathlib import Path
 
 
-def download_file(url, download_to: Path, expected_size=None):
+def download_file(url, download_to: Path, expected_size=None, key=None):
     # Don't download the file twice.
     # (If possible, verify the download using the file length.)
     if download_to.exists():
@@ -15,7 +15,7 @@ def download_file(url, download_to: Path, expected_size=None):
                 return
         else:
             st.info(f"{url} is already downloaded.")
-            if not st.button("Download again?"):
+            if not st.button("Download again?", key=key):
                 return
 
     download_to.parent.mkdir(parents=True, exist_ok=True)
@@ -79,8 +79,8 @@ if __name__ == "__main__":
     MODEL_LOCAL_PATH = HERE / "models/top2vec-self.model"
     DATA_LOCAL_PATH = HERE / "data/all_data_clean_corrected_english.feather"
 
-    download_file(MODEL_URL, MODEL_LOCAL_PATH)
-    download_file(DATA_URL, DATA_LOCAL_PATH)
+    download_file(MODEL_URL, MODEL_LOCAL_PATH, 'model')
+    download_file(DATA_URL, DATA_LOCAL_PATH, 'data')
 
     model = get_model(MODEL_LOCAL_PATH.as_posix().__str__())
     data = get_data(DATA_LOCAL_PATH.as_posix().__str__())
