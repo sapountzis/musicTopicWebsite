@@ -1,3 +1,4 @@
+import joblib
 import pandas as pd
 import streamlit as st
 import numpy as np
@@ -58,7 +59,7 @@ def get_data(data_local_path: str):
 
 @st.experimental_singleton
 def get_model(model_local_path: str):
-    model: Top2Vec = Top2Vec.load(model_local_path)
+    model: Top2Vec = joblib.load(model_local_path)
     model._check_model_status()
     return model
 
