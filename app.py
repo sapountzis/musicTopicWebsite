@@ -52,12 +52,12 @@ def download_file(url, download_to: Path, expected_size=None):
 
 
 @st.experimental_singleton
-def get_data(data_local_path: Path):
+def get_data(data_local_path: str):
     return pd.read_feather(data_local_path)
 
 
 @st.experimental_singleton
-def get_model(model_local_path: Path):
+def get_model(model_local_path: str):
     model: Top2Vec = Top2Vec.load(model_local_path)
     model._check_model_status()
     return model
@@ -79,18 +79,20 @@ if __name__ == "__main__":
     MODEL_LOCAL_PATH = HERE / "models/top2vec-self.model"
     DATA_LOCAL_PATH = HERE / "data/all_data_clean_corrected_english.feather"
 
+    print(MODEL_LOCAL_PATH.as_posix().__str__())
+    exit()
     download_file(MODEL_URL, MODEL_LOCAL_PATH)
     download_file(DATA_URL, DATA_LOCAL_PATH)
 
-    model = get_model(MODEL_LOCAL_PATH)
-    data = get_data(DATA_LOCAL_PATH)
+    model = get_model(MODEL_LOCAL_PATH.as_posix().__str__())
+    data = get_data(DATA_LOCAL_PATH.as_posix().__str__())
     st.title('Music Topic Search')
     c = st.empty()
     with st.sidebar:
         with st.form('search'):
             st.text('Search for music topics and get similar songs')
             search = st.text_input('Search for a topic', value='')
-            submit = st.form_submit_button('Submit')
+            submit = st.form_submit_button('Search')
 
             if submit:
                 res = get_similar(search, model)
@@ -99,6 +101,4 @@ if __name__ == "__main__":
 
                 with c:
                     st.dataframe(res, height=750)
-                # st.dataframe(res, width=1000)
-
 
