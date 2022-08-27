@@ -74,8 +74,8 @@ def get_songs(data: pd.DataFrame, lyrics: list[str]):
 
 if __name__ == "__main__":
     HERE = Path(__file__).parent
-    MODEL_URL = "https://cdn-119.anonfiles.com/Oap8B55dyc/bfe39b4b-1661613860/top2vec-self.model"
-    DATA_URL = "https://cdn-129.anonfiles.com/Ebn9Ba58y2/5fd7cd62-1661613664/all_data_clean_corrected_english.feather"
+    MODEL_URL = "https://filetransfer.io/data-package/edqmoqJE/download"
+    DATA_URL = "https://filetransfer.io/data-package/4kI7KiRp/download"
     MODEL_LOCAL_PATH = HERE / "models/top2vec-self.model"
     DATA_LOCAL_PATH = HERE / "data/all_data_clean_corrected_english.feather"
 
