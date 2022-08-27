@@ -79,8 +79,8 @@ if __name__ == "__main__":
     MODEL_LOCAL_PATH = HERE / "models/top2vec-self.model"
     DATA_LOCAL_PATH = HERE / "data/all_data_clean_corrected_english.feather"
 
-    download_file(MODEL_URL, MODEL_LOCAL_PATH, 'model')
-    download_file(DATA_URL, DATA_LOCAL_PATH, 'data')
+    download_file(MODEL_URL, MODEL_LOCAL_PATH, key='model')
+    download_file(DATA_URL, DATA_LOCAL_PATH, key='data')
 
     model = get_model(MODEL_LOCAL_PATH.as_posix().__str__())
     data = get_data(DATA_LOCAL_PATH.as_posix().__str__())
