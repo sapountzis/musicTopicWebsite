@@ -47,19 +47,18 @@ if __name__ == "__main__":
     model = get_model(MODEL_LOCAL_PATH)
 
     st.title('Music Topic Search')
-
+    form = st.form('search')
     c = st.empty()
-    with st.sidebar:
-        with st.form('search'):
-            st.markdown('Search for music topics and get similar songs')
-            search = st.text_input('Search for a topic', value='')
-            submit = st.form_submit_button('Search')
+    with form:
+        st.markdown('Search for music topics and get similar songs')
+        search = st.text_input('Search for a topic', value='')
+        submit = st.form_submit_button('Search')
 
-            if submit:
-                res = get_similar(search, model)
-                res = get_songs(data, lyrics_index, res)
-                res.index += 1
+        if submit:
+            res = get_similar(search, model)
+            res = get_songs(data, lyrics_index, res)
+            res.index += 1
 
-                with c:
-                    st.dataframe(res, height=750)
+            with c:
+                st.dataframe(res, height=750)
 
