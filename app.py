@@ -36,7 +36,6 @@ def get_songs(data, lyrics_index, lyrics):
 
 
 if __name__ == "__main__":
-    HERE = Path(__file__).parent
     # MODEL_LOCAL_PATH = "models/top2vec-self.model"
     # DATA_LOCAL_PATH = "data/all_data_clean_corrected_english.feather"
     MODEL_LOCAL_PATH = "/content/drive/MyDrive/MusicTopics/top2vec-self.model"
@@ -44,13 +43,15 @@ if __name__ == "__main__":
 
     data = get_data(DATA_LOCAL_PATH)
     lyrics_index = get_lyrics_index(data)
+    data = data.drop(columns=['lyrics'])
     model = get_model(MODEL_LOCAL_PATH)
 
     st.title('Music Topic Search')
+
     c = st.empty()
     with st.sidebar:
         with st.form('search'):
-            st.text('Search for music topics and get similar songs')
+            st.markdown('Search for music topics and get similar songs')
             search = st.text_input('Search for a topic', value='')
             submit = st.form_submit_button('Search')
 
