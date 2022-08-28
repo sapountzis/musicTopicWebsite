@@ -27,13 +27,15 @@ def get_similar(input: str, model: Top2Vec):
 
 
 def get_songs(data, lyrics):
-    return data[data['lyrics'].isin(lyrics)][['song', 'artist']].reset_index(drop=True)
+    return data.iloc[pd.Index(data['lyrics']).get_indexer(lyrics)][['artist', 'songs']].reset_index(drop=True)
 
 
 if __name__ == "__main__":
     HERE = Path(__file__).parent
-    MODEL_LOCAL_PATH = "models/top2vec-self.model"
-    DATA_LOCAL_PATH = "data/all_data_clean_corrected_english.feather"
+    # MODEL_LOCAL_PATH = "models/top2vec-self.model"
+    # DATA_LOCAL_PATH = "data/all_data_clean_corrected_english.feather"
+    MODEL_LOCAL_PATH = "/content/drive/MyDrive/MusicTopics/top2vec-self.model"
+    DATA_LOCAL_PATH = "/content/drive/MyDrive/MusicTopics/all_data_clean_corrected_english.feather"
 
     model = get_model(MODEL_LOCAL_PATH)
     data = get_data(DATA_LOCAL_PATH)
