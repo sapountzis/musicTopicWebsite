@@ -15,6 +15,11 @@ def get_data(data_local_path: str):
 
 
 @st.experimental_singleton
+def get_lyrics_index(data):
+    return pd.Index(data['lyrics'])
+
+
+@st.experimental_singleton
 def get_model(model_local_path: str):
     model: Top2Vec = joblib.load(model_local_path)
     model._check_model_status()
@@ -26,8 +31,8 @@ def get_similar(input: str, model: Top2Vec):
     return model.search_documents_by_vector(vec, num_docs=20)[0]
 
 
-def get_songs(data, lyrics):
-    return data.iloc[pd.Index(data['lyrics']).get_indexer(lyrics)][['artist', 'songs']].reset_index(drop=True)
+def get_songs(data, lyrics_index, lyrics):
+    return data.iloc[lyrics_index.get_indexer(lyrics)][['artist', 'song']].reset_index(drop=True)
 
 
 if __name__ == "__main__":
@@ -37,8 +42,9 @@ if __name__ == "__main__":
     MODEL_LOCAL_PATH = "/content/drive/MyDrive/MusicTopics/top2vec-self.model"
     DATA_LOCAL_PATH = "/content/drive/MyDrive/MusicTopics/all_data_clean_corrected_english.feather"
 
-    model = get_model(MODEL_LOCAL_PATH)
     data = get_data(DATA_LOCAL_PATH)
+    lyrics_index = get_lyrics_index(data)
+    model = get_model(MODEL_LOCAL_PATH)
 
     st.title('Music Topic Search')
     c = st.empty()
@@ -50,7 +56,7 @@ if __name__ == "__main__":
 
             if submit:
                 res = get_similar(search, model)
-                res = get_songs(data, res)
+                res = get_songs(data, lyrics_index, res)
                 res.index += 1
 
                 with c:
